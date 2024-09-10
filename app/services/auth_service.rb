@@ -5,7 +5,7 @@ class AuthService
     if @user.save
       return @user
     else
-      raise StandardError.new(@user.errors.full_messages.join(', '))
+      raise ConflictError.new(@user.errors.full_messages.join(', '))
     end
   end
 
