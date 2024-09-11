@@ -1,14 +1,19 @@
 module Api
   class AuthController < ApplicationController
     skip_before_action :authMiddleware #Para que no pase por el middleware del Authorization header
-  
+
     before_action :service
 
     def signUp
-      @user = @service.register(signUpParams)
-
-      token = generateToken(userId: @user.id)
-      render json: {token: token}, status: :created
+      begin        
+        @user = @service.register(signUpParams)
+        token = generateToken(userId: @user.id)
+        render json: {token: token}, status: :created
+      rescue ActiveRecord::DuplicateRecord => e
+        render json: {error: e.message}, status: :conflict
+      rescue ActiveRecord::RecordInvalid => e
+        render json: {error: e.message}, status: :bad_request
+      end
     end
   
     def signIn
@@ -24,7 +29,7 @@ module Api
     private
   
     def signUpParams
-      params.permit(:name, :email, :password, :username)
+      params.require(:auth).permit(:name, :email, :password, :username)
     end
   
     def service

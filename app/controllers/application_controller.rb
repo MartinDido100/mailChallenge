@@ -1,9 +1,5 @@
-require 'errors'
-
 class ApplicationController < ActionController::API
   include JwtConcern
-
-  rescue_from HttpError, with: :handleError
   before_action :authMiddleware
 
   private
@@ -16,10 +12,5 @@ class ApplicationController < ActionController::API
       else
         render json: {error: 'Unauthorized, you must login'}, status: :unauthorized
       end
-    end
-
-    def handleError(error)
-      puts "Error: #{error.message}"
-      render json: {error: error.message}, status: :internal_server_error
     end
 end

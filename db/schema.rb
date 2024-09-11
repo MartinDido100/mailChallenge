@@ -17,13 +17,4 @@ ActiveRecord::Schema.define(version: 20240910145016) do
   enable_extension "pgcrypto"
   enable_extension "uuid-ossp"
 
-  create_table "users", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.string   "name"
-    t.string   "email"
-    t.string   "password_digest"
-    t.string   "username"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
 end
