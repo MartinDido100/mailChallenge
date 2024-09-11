@@ -1,6 +1,6 @@
 class AuthService 
 
- def register(signUpData)
+  def register(signUpData)
     User.create!(signUpData)
   end
 

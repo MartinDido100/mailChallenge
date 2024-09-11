@@ -5,17 +5,16 @@ module Api
     before_action :service
 
     def signUp
-      begin        
+      begin
         @user = @service.register(signUpParams)
         token = generateToken(userId: @user.id)
+        UserMailer.confirm(@user).deliver_later!
         render json: {token: token}, status: :created
-      rescue ActiveRecord::DuplicateRecord => e
-        render json: {error: e.message}, status: :conflict
       rescue ActiveRecord::RecordInvalid => e
-        render json: {error: e.message}, status: :bad_request
+        render json: {error: e.message}, status: :unprocessable_entity
       end
     end
-  
+    
     def signIn
       @user = User.find_by(username: params[:username])
       if @user && @user.authenticate(params[:password])
