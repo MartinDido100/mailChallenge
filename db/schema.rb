@@ -10,34 +10,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20240911152306) do
+ActiveRecord::Schema.define(version: 20240912171917) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pgcrypto"
   enable_extension "uuid-ossp"
 
-  create_table "mails", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+  create_table "emails", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "subject"
-    t.uuid     "sender_id"
-    t.uuid     "receiver_id"
     t.text     "body"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.index ["receiver_id"], name: "index_mails_on_receiver_id", using: :btree
-    t.index ["sender_id"], name: "index_mails_on_sender_id", using: :btree
+    t.uuid     "senderId"
+    t.uuid     "receiverId"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["receiverId"], name: "index_emails_on_receiverId", using: :btree
+    t.index ["senderId"], name: "index_emails_on_senderId", using: :btree
+  end
+
+  create_table "roles", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.integer  "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "name"
-    t.string   "email",           null: false
+    t.string   "email",               null: false
     t.string   "password_digest"
-    t.string   "username",        null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.string   "username",            null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
     t.boolean  "confirmed"
+    t.string   "confirm_email_token"
+    t.uuid     "role_id"
   end
 
-  add_foreign_key "mails", "users", column: "receiver_id"
-  add_foreign_key "mails", "users", column: "sender_id"
+  add_foreign_key "emails", "users", column: "receiverId"
+  add_foreign_key "emails", "users", column: "senderId"
 end

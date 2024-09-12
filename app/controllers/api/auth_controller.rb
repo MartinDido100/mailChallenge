@@ -1,8 +1,9 @@
 module Api
   class AuthController < ApplicationController
-    skip_before_action :authMiddleware #Para que no pase por el middleware del Authorization header
 
-    before_action :service
+    def initialize
+      @service = AuthService.new
+    end
 
     def signUp
       begin
@@ -28,11 +29,7 @@ module Api
     private
   
     def signUpParams
-      params.require(:auth).permit(:name, :email, :password, :username)
-    end
-  
-    def service
-      @service = AuthService.new
+      params.permit(:name, :email, :password, :username)
     end
 
     def signInParams

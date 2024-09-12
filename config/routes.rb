@@ -7,8 +7,14 @@ Rails.application.routes.draw do
                 get 'me', to: 'user#me'
                 delete '', to: 'user#destroy'
                 put '', to: 'user#update'
-                put 'confirm', to: 'user#confirm'
+                get 'confirm/:token', to: 'user#confirm'
             end
+        end
+        resources :mail, only: [] do
+          collection do
+            post '', to: 'email#sendMail'
+            get 'stats', to: 'email#stats'
+          end
         end
     end
 end

@@ -13,7 +13,11 @@ class UserService
   end
 
   def confirmEmail(user)
-    user.update!(confirmed: true)
+    user.update!(confirmed: true, confirm_email_token: nil)
+  end
+
+  def findByToken(token)
+    User.find_by!(confirm_email_token: token)
   end
 
 end

@@ -2,12 +2,12 @@
 
 one:
   subject: MyString
-  sender: one
-  receiver: one
   body: MyText
+  senderId: 
+  receiverId: 
 
 two:
   subject: MyString
-  sender: two
-  receiver: two
   body: MyText
+  senderId: 
+  receiverId: 

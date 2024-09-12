@@ -1,7 +1,12 @@
 module Api
   class UserController < ApplicationController
     before_action :setUser, only: [:show]
-    before_action :service
+    before_action :authMiddleware
+    skip_before_action :authMiddleware, only: [:confirm]
+
+    def initialize
+      @service = UserService.new
+    end
 
     def show
       begin
@@ -29,12 +34,18 @@ module Api
     end
 
     def confirm
-      if @loggedUser.confirmed
-        render json: { error: 'Email already confirmed' }, status: :conflict
-        return
+      begin
+        @user = @service.findByToken(params[:token])
+
+        if @user.confirmed
+          return render json: { error: 'Email already confirmed' }, status: :conflict
+        end
+
+        @service.confirmEmail(@user)
+        render json: {msg: 'Email confirmed!'},status: :ok
+      rescue ActiveRecord::RecordNotFound => e
+        render json: { error: e.message }, status: :not_found
       end
-      @service.confirmEmail(@loggedUser)
-      render status: :no_content
     end
 
     def destroy
@@ -43,9 +54,6 @@ module Api
     end
 
     private
-    def service
-      @service = UserService.new
-    end
 
     def updateParams
       params.permit(:name, :email, :username)
