@@ -9,7 +9,7 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: true
   validates :password,length: { minimum: 6 }, presence: true, on: :create
 
-  has_many :emails, class_name: 'Email', foreign_key: 'senderId'
+  has_many :emails_sent, class_name: 'Email', foreign_key: 'senderId'
   has_many :received_mails, class_name: 'Email', foreign_key: 'receiverId'
   belongs_to :role, class_name: "Role", foreign_key: "role_id"
 

@@ -1,5 +1,8 @@
 <h1>Welcome to mail challenge: <%= @user.username %></h1>
 
-<p>Click the link below to confirm your email address:
-  <%= link_to 'Confirm email', @url %>
-</p>
+<div class="container">
+  <p>Click the link below to confirm your email address:</p>
+  <%= link_to 'Confirm email', @url, class: 'confirm-button' %>
+</div>
+
+

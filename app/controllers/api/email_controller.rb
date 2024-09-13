@@ -1,5 +1,5 @@
 class Api::EmailController < ApplicationController
-    before_action :authMiddleware
+    before_action :authenticateUser
 
     def initialize
       @service = EmailService.new
@@ -20,11 +20,15 @@ class Api::EmailController < ApplicationController
     end
 
     def stats
-      if !@loggedUser.role.admin?
-        render json: {error: 'You must be admin to see this content'}, :forbidden
+      puts @loggedUser.role.user?
+      if @loggedUser.role.user?
+        render json: {error: 'You must be admin to see this content'}, status: :forbidden
       end
 
-      # Get stats data
+      @stats = @service.getStats
+      @serializer = UserSerializer.new(@stats)
+
+      render json: @serializer.as_json, status: :ok
     end
 
     private

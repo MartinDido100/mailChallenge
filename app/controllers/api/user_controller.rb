@@ -1,8 +1,8 @@
 module Api
   class UserController < ApplicationController
     before_action :setUser, only: [:show]
-    before_action :authMiddleware
-    skip_before_action :authMiddleware, only: [:confirm]
+    before_action :authenticateUser
+    skip_before_action :authenticateUser, only: [:confirm]
 
     def initialize
       @service = UserService.new
@@ -11,23 +11,26 @@ module Api
     def show
       begin
         @user = @service.getUser(params[:id])
-        userSerializer = UserSerializer.new(@user)
-        render json: userSerializer.as_json, status: :ok
+        serializer = UserSerializer.new(@loggedUser)
+        serializedUser = serializer.model_as_json
+        render json: serializedUser, status: :ok
       rescue ActiveRecord::RecordNotFound => e
         render json: { error: e.message }, status: :not_found
       end
     end
 
     def me
-      userSerializer = UserSerializer.new(@loggedUser)
-      render json: userSerializer.as_json, status: :ok
+      serializer = UserSerializer.new(@loggedUser)
+      serializedUser = serializer.model_as_json
+      render json: serializedUser, status: :ok
     end
 
     def update
       begin
         @updatedUser = @service.updateUser(@loggedUser, updateParams)
-        userSerializer = UserSerializer.new(@updatedUser)
-        render json: userSerializer.as_json, status: :ok
+        serializer = UserSerializer.new(@loggedUser)
+        serializedUser = serializer.model_as_json
+        render json: serializedUser, status: :ok
       rescue ActiveRecord::RecordInvalid => e
         render json: { error: e.message }, status: :conflict
       end

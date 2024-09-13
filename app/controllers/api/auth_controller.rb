@@ -9,7 +9,7 @@ module Api
       begin
         @user = @service.register(signUpParams)
         token = generateToken(userId: @user.id)
-        UserMailer.confirm(@user).deliver_later!
+        UserMailer.confirm(@user).deliver_later
         render json: {token: token}, status: :created
       rescue ActiveRecord::RecordInvalid => e
         render json: {error: e.message}, status: :unprocessable_entity
